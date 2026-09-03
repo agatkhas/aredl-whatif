@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse the extension sources
+        run: |
+          node --check src/core.js
+          node --check src/ui.js
+
+      - name: Validate manifest.json
+        run: |
+          python - <<'PY'
+          import json, os, sys
+          m = json.load(open('manifest.json'))
+          assert m['manifest_version'] == 3, 'expected MV3'
+          cs = m['content_scripts'][0]
+          assert cs['world'] == 'MAIN', 'the fetch hook only works in the MAIN world'
+          assert cs['run_at'] == 'document_start', 'must beat the app bundle to window.fetch'
+          missing = [p for p in cs['js'] + list(m['icons'].values()) if not os.path.exists(p)]
+          if missing:
+              sys.exit('manifest references missing files: %s' % missing)
+          print('manifest ok, v%s, %d scripts, %d icons'
+                % (m['version'], len(cs['js']), len(m['icons'])))
+          PY
+
+      - name: Build the release artifacts
+        run: python build.py
+
+      - name: Check the userscript kept its header
+        run: |
+          head -1 dist/aredl-whatif.user.js | grep -qx '// ==UserScript==' \
+            || { echo 'userscript header missing'; exit 1; }
+          node --check dist/aredl-whatif.user.js
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aredl-whatif
+          path: dist/

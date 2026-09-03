@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "AREDL What-If",
+  "version": "1.0.0",
+  "description": "Visualize simulated records on your profile: points, packs and leaderboard rank on aredl.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://aredl.net/*",
+        "https://www.aredl.net/*"
+      ],
+      "js": [
+        "src/core.js",
+        "src/ui.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
+}

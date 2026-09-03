@@ -97,7 +97,9 @@ const CSS = `
 /* ---- panel: the site's card, on the modal surface ---- */
 .panel {
   position: fixed; right: 16px; bottom: 68px; z-index: 2147483000;
-  width: 384px; max-height: min(76vh, 720px);
+  /* fixed, not max-: with max-height the panel resized as you typed and the top
+     edge jumped up to 250px under your cursor */
+  width: 384px; height: min(76vh, 720px);
   display: flex; flex-direction: column;
   padding: 16px; border-radius: 12px;
   background-color: hsla(var(--modal-background));
@@ -197,7 +199,7 @@ const CSS = `
 .note b { color: hsl(var(--foreground)); font-weight: 500; }
 
 @media (max-width: 640px) {
-  .panel { left: 8px; right: 8px; bottom: 64px; width: auto; max-height: 72vh; }
+  .panel { left: 8px; right: 8px; bottom: 64px; width: auto; height: 72vh; }
   .fab { right: 8px; bottom: 8px; }
   .stats { grid-template-columns: 1fr 1fr; }
 }

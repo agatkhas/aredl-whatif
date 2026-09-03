@@ -10,7 +10,7 @@ if (window.__AREDL_WHATIF__) return;
 
 const API       = 'https://api.aredl.net/v2/api/aredl';
 const K_OVER    = 'aredl-whatif:overrides';
-const K_DATA    = 'aredl-whatif:data2';
+const K_DATA    = 'aredl-whatif:data3';
 const K_SAMPLES = 'aredl-whatif:samples';
 const DATA_TTL  = 6 * 60 * 60 * 1000;
 const origFetch = window.fetch.bind(window);
@@ -49,7 +49,7 @@ const data = { levels: [], byId: new Map(), byGd: new Map(), packs: [], loaded: 
 
 const trimLevel = l => ({
   id: l.id, name: l.name, level_id: l.level_id, position: l.position,
-  points: l.points, status: l.status,
+  points: l.points, status: l.status, two_player: !!l.two_player,
 });
 
 function flattenPacks(tiers) {
@@ -465,7 +465,7 @@ function fakeRecord(l) {
   const ts = new Date().toISOString();
   return {
     id: 'whatif-' + l.id,
-    level: { id: l.id, name: l.name, level_id: l.level_id, two_player: false,
+    level: { id: l.id, name: l.name, level_id: l.level_id, two_player: !!l.two_player,
              position: l.position, points: l.points, status: l.status, requires_raw_footage: false },
     mobile: false, video_url: '', is_verification: false, hide_video: true,
     achieved_at: ts, created_at: ts, updated_at: ts, __whatif: true,
@@ -524,6 +524,8 @@ async function rewriteLeaderboard(res) {
     if (u.username !== session.username) continue;
     const a = current.after;
     e.total_points = a.total; e.pack_points = a.packPoints; e.extremes = a.extremes;
+    if (a.hardest) e.hardest = { id: a.hardest.id, name: a.hardest.name,
+                                 level_id: a.hardest.level_id, two_player: !!a.hardest.two_player };
     if (session.ranks) for (const o of ORDERS) {
       e[RANK_FIELD[o]]    = session.ranks[RANK_FIELD[o]];
       e[COUNTRY_FIELD[o]] = session.ranks[COUNTRY_FIELD[o]];

@@ -4,6 +4,8 @@ visualize simulated records on your profile: points, packs and leaderboard rank 
 
 click an extreme and the site will update it like you beat it! (･ω･)
 
+very useful for calculating your points and rank with levels you want to beat or records that are pending  
+
 ![screenshot](screenshot.png)
 
 ## what it does
